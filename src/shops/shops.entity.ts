@@ -11,6 +11,9 @@ export class Shop extends BaseEntity {
   shopId: number;
 
   @Column()
+  userId:number;
+
+  @Column()
   shopName: string;
   
   @Column()

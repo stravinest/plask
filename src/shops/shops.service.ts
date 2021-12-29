@@ -21,12 +21,7 @@ export class ShopsService {
     .leftJoinAndSelect('Shop.user', 'user')
     .where('Shop.shopId = :shopId', { shopId:shopId  })
     .getOne();
-    console.log(shop)
-    // const found2 = await this.userRepository.findOne(shopId)
-    // console.log(found.shopId)
-    
-    // console.log(found.user.id)
-    // console.log(found2)
+  
     if(!shop){
       throw new NotFoundException(`can't ${shopId}`);
     }

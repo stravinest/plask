@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import * as config from 'config';
 import { ShopsModule } from './shops/shops.module';
+import { ProductsModule } from './products/products.module';
 const dbConfig= config.get('db');
 @Module({
   imports:[TypeOrmModule.forRoot({
@@ -14,6 +15,6 @@ const dbConfig= config.get('db');
     "database": dbConfig.database,
     "entities": ["dist/**/*.entity{.ts,.js}"],
     "synchronize": dbConfig.synchronize
-  }),ShopsModule,AuthModule],
+  }),ShopsModule,AuthModule,ProductsModule],
 })
 export class AppModule {}
