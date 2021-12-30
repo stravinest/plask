@@ -1,12 +1,18 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/user.entity';
 import { ShopsRepository } from 'src/shops/shops.repository';
-import { createQueryBuilder } from 'typeorm';
 import { createProductsDto } from './dto/create-products.dto';
-import { ProductsCategory } from './products-category-enum';
-import { Product } from './products.entity';
 import { ProductsRepository } from './products.repository';
+import * as AWS from 'aws-sdk' ;
+import * as config from 'config';
+
+AWS.config.update({
+  accessKeyId: config.get('s3.access_key'),
+  secretAccessKey:config.get('s3.secret_key')
+  // 'region':,
+});
+const s3 = new AWS.S3();
 
 @Injectable()
 export class ProductsService {
@@ -16,6 +22,11 @@ export class ProductsService {
     @InjectRepository(ShopsRepository)
     private shopsRepository:ShopsRepository,
   ){}
+
+  async uploadImage(file) {
+    console.log(file)
+    return "SUCESS";
+  }
   async createProduct(shopId:number,createProductsDto:createProductsDto,user:User):Promise<{}>{
     const isShop =await this.shopsRepository.findOne(shopId);
     if(!isShop){
@@ -160,22 +171,33 @@ export class ProductsService {
     }
   }
   async getProductsCategory(category:string,shopId:number){
-    return await this.productsRepository.find({
-      where:{
-        shopId:shopId,
-        category:category
-      }
-    })
+    if(category==='female'||category==='male'||category==='child'){
+      return await this.productsRepository.find({
+        where:{
+          shopId:shopId,
+          category:category
+        }
+      })
+
+    }else{
+      throw new BadRequestException(`${category} isn't in the category oprions`)
+    }
+    
 
   }
 
   async getProductById(shopId:number,productsId:number){
-    return await this.productsRepository.find({
+    const found = await this.productsRepository.find({
       where:{
         shopId:shopId,
         productsId:productsId
       }
     })
+    if(found.length===0){
+      throw new NotFoundException(`찾을수 없습니다.${shopId},${productsId} `)
+    }
+
+    return found
   }
 }
 

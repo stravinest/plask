@@ -10,7 +10,11 @@ import { ShopsService } from './shops.service';
 
 export class ShopsController {
   constructor(private shopsService:ShopsService){}
-  
+  @Get('/search')
+  getSearchName(@Query('name') name:string ):Promise<Shop[]>{
+    return this.shopsService.getSearchName(name);
+  }
+
   @Get('/:shopsId')
   getShopsById(@Param('shopsId') shopsId: number) : Promise<{}>{
     return this.shopsService.getShopsById(shopsId)
@@ -25,7 +29,7 @@ export class ShopsController {
   @UsePipes(ValidationPipe)
   createShop(
     @Body() createShopsDto: createShopsDto,
-    @GetUser() user:User):Promise<Shop> {
+    @GetUser() user:User):Promise<{}> {
     return this.shopsService.createShop(createShopsDto,user)
     
   }

@@ -12,8 +12,7 @@ export class AuthCredentialsDto{
   userName:string;
 
   @IsString()
-  @MinLength(8)
-  @Matches(/^[a-zA-Z0-9]*$/,{
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/,{
     message:'적합한 비밀번호가 아닙니다.'
   })
   password:string;
@@ -24,8 +23,7 @@ export class AuthCredentialsLoginDto{
   email:string;
 
   @IsString()
-  @MinLength(8)
-  @Matches(/^[a-zA-Z0-9]*$/,{
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/,{
     message:'적합한 비밀번호가 아닙니다.'
   })
   password:string;

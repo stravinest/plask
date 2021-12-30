@@ -6,15 +6,15 @@ import { Shop } from "./shops.entity";
 @EntityRepository(Shop)
 export class ShopsRepository extends Repository<Shop>{
 
-  async createShops(createShopsDto:createShopsDto,user:User):Promise<Shop>{
+  async createShops(createShopsDto:createShopsDto,user:User):Promise<{}>{
     const {shopName,shopLogo} = createShopsDto;
     const shop = this.create({
       shopName,
       shopLogo,
       user
-    })
+    });
     await this.save(shop);
-    return shop
+    return {result:'success'}
   }
 
 

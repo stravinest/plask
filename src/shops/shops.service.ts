@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { skip, take } from 'rxjs';
 import { User } from 'src/auth/user.entity';
 import { UserRepository } from 'src/auth/user.repository';
-import { createQueryBuilder, getRepository } from 'typeorm';
+import { createQueryBuilder, getRepository, Like } from 'typeorm';
 import { createShopsDto } from './dto/create-shops.dto';
 import { Shop } from './shops.entity';
 import { ShopsRepository } from './shops.repository';
-
+import { textSearchByFields } from 'typeorm-text-search';
 @Injectable()
 export class ShopsService {
   constructor(
@@ -16,7 +16,6 @@ export class ShopsService {
   ){}
 
   async getShopsById(shopId:number):Promise<{}>{
-    const found = await this.shopsRepository.findOne(shopId)
     const shop = await createQueryBuilder('Shop')
     .leftJoinAndSelect('Shop.user', 'user')
     .where('Shop.shopId = :shopId', { shopId:shopId  })
@@ -35,8 +34,16 @@ export class ShopsService {
 
     });
   }
+  
+  async getSearchName(name:string):Promise<Shop[]>{
+    const found = await this.shopsRepository.find({shopName: Like(`%${name}%`)})
+    if(found.length===0){
+      throw new NotFoundException(`can't ${name}`);
+    }
+    return found
+  }
 
-  createShop(createShopsDto:createShopsDto,user:User): Promise<Shop>{
+  createShop(createShopsDto:createShopsDto,user:User): Promise<{}>{
     return this.shopsRepository.createShops(createShopsDto,user);
   }
 
